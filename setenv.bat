@@ -1,1 +1,2 @@
-set JAVA_OPTS=-Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl
+set JAVA_HOME=%~dp0
+set PATH=%JAVA_HOME%\bin;%PATH%
