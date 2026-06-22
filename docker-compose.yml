@@ -1,0 +1,10 @@
+version: '3'
+services:
+  cyclos:
+    image: cyclos/cyclos4-pro
+    ports:
+      - "8080:8080"
+    environment:
+      - CYCLOS_DB_URL=jdbc:postgresql://host.docker.internal:8432/cyclos
+      - CYCLOS_DB_USER=kamran
+      - CYCLOS_DB_PASSWORD=Kamran$
