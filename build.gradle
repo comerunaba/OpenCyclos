@@ -3,13 +3,13 @@ apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
         classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.2'
         classpath 'de.undercouch:gradle-download-task:3.1.0'
-	    classpath 'com.github.ben-manes:gradle-versions-plugin:+'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:+'
     }
 }
 
@@ -21,15 +21,19 @@ apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
 apply plugin: 'de.undercouch.download'
 
+tomcat {
+    httpPort = 6001
+}
+
 sourceCompatibility = 1.8
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven {
+        url 'https://jaspersoft.jfrog.io/jaspersoft/jaspersoft-repo'
+    }
     flatDir {
         dirs 'libs'
-    }
-    maven {
-       url 'http://52north.org/maven/repo/releases/'
     }
 }
 
@@ -192,12 +196,6 @@ dependencies {
     // EcliseLink
     runtimeClasspath group: 'org.eclipse.persistence', name: 'org.eclipse.persistence.jpa', version: '2.7.0'
 
-    //// Jackson (An -all jar is in the lib directory, but Maven doesn't have one.)
-    //// http://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl
-    //compile group: 'org.codehaus.jackson', name: 'jackson-core-asl', version: '1.9.6'
-    //// http://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl
-    //compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.6'
-
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.4'
@@ -205,6 +203,14 @@ dependencies {
     // JAMA
     // http://mvnrepository.com/artifact/gov.nist.math/jama
     compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+
+    // CORS filter
+    // https://mvnrepository.com/artifact/com.thetransactioncompany/cors-filter
+    compile group: 'com.thetransactioncompany', name: 'cors-filter', version: '2.5'
+
+    // JasperReports
+    // http://mvnrepository.com/artifact/com.jaspersoft.jasperserver/jasperreports
+    compile group: 'com.jaspersoft.jasperserver', name: 'jasperreports', version: '5.1.0'
 
     // Java Extensions
     // http://mvnrepository.com/artifact/javax.activation/activation
@@ -214,15 +220,14 @@ dependencies {
     // http://mvnrepository.com/artifact/javax.mail/javax.mail-api
     compile group: 'javax.mail', name: 'javax.mail-api', version: '1.5.5'
     // http://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api
-    providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1' // Not in the Cyclos lib directory, but required to be compiled.
+    providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
 
     // Javassist
     // https://mvnrepository.com/artifact/org.javassist/javassist
-compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
-
+    compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
 
     // JavaStat
-    compile name: 'javastat' // Sorry, I couldn't find JavaStat on Maven Central or jCenter. I grabbed the jar from Cyclos' lib directory.
+    compile name: 'javastat'
 
     // JFree
     // http://mvnrepository.com/artifact/jfree/jcommon
@@ -251,10 +256,6 @@ compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
     // Kaptcha
     compile group: 'com.github.penggle', name: 'kaptcha', version: '2.3.2'
 
-    // Logkit
-    // http://mvnrepository.com/artifact/logkit/logkit
-    //compile group: 'logkit', name: 'logkit', version: '1.0.1'
-
     compile group: 'org.apache.avalon.logkit', name: 'avalon-logkit', version: '2.2.1'
 
     // MySQL Connector/J
@@ -267,6 +268,9 @@ compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
 
     // https://mvnrepository.com/artifact/com.h2database/h2
     runtimeClasspath group: 'com.h2database', name: 'h2', version: '1.4.196'
+
+    // PostgreSQL Driver
+    runtimeClasspath group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 
     // Spring
     // http://mvnrepository.com/artifact/org.springframework/spring-aop
@@ -300,14 +304,14 @@ compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
 
     compile group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
 
-    // SLF4J (I used 1.6 because Gradle wasn't happy with 1.5.6.)
+    // SLF4J
     // http://mvnrepository.com/artifact/org.slf4j/slf4j-api
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
     // http://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
 
     // SSLExt
-    compile  group: 'sslext', name: 'sslext', version: '1.2-0'
+    compile group: 'sslext', name: 'sslext', version: '1.2-0'
 
     // Standard
     // http://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl
@@ -318,9 +322,8 @@ compile group: 'org.javassist', name: 'javassist', version: '3.20.0-GA'
     compile group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
 
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:8.0.36",
-       "org.apache.tomcat.embed:tomcat-embed-logging-juli:8.0.36",
-       "org.apache.tomcat.embed:tomcat-embed-jasper:8.0.36"
-
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:8.0.36",
+           "org.apache.tomcat.embed:tomcat-embed-jasper:8.0.36"
 }
 
 war {
@@ -336,7 +339,6 @@ task distZip(dependsOn: 'war', type: Zip) {
 }
 
 task downloadTomcat(type: Download) {
-    //src 'http://www-us.apache.org/dist/tomcat/tomcat-7/v7.0.69/bin/apache-tomcat-7.0.69.zip'
     src 'http://apache.mirrors.spacedump.net/tomcat/tomcat-8/v8.0.36/bin/apache-tomcat-8.0.36.zip'
     dest new File(buildDir, 'tomcat.zip')
 }
@@ -364,3 +366,8 @@ task standalone(dependsOn: ['downloadTomcat', 'war'], type: Zip) {
 
 build.dependsOn distZip
 build.dependsOn standalone
+
+tomcat {
+    httpPort = 8082
+    contextPath = '/cyclos'
+}
