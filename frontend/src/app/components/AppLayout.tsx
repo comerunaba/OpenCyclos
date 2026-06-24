@@ -44,7 +44,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     { href: "/accounts", label: "Accounts", roles: ['admin', 'user'] },
     { href: "/payments", label: "Payments", roles: ['admin', 'user'] },
     // Admin-only links
-    { href: "/admin/settings", label: "Admin Settings", roles: ['admin'] },
+    { href: "/admin/settings", label: "System Settings", roles: ['admin'] },
+    { href: "/admin/roles", label: "Role Management", roles: ['admin'] },
     { href: "/admin/users", label: "User Management", roles: ['admin'] },
   ];
 

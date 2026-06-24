@@ -2,46 +2,44 @@
 
 import { useEffect, useState } from "react";
 
-interface User {
+interface Account {
+  id: string;
+  type: string;
   name: string;
-  username: string;
-  email: string;
+  number: string;
+  balance: number;
+  currency: string;
 }
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    fetch("http://localhost:6001/api/accounts")
+      .then((res) => res.json())
+      .then((data) => {
+        setAccounts(data);
+        setLoading(false);
+      });
   }, []);
 
-  if (!user) {
-    return null; // The layout handles the loading state
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-800">Your Profile</h2>
-          <div className="mt-4 space-y-2">
-            <p>
-              <strong>Username:</strong> {user.username}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email}
-            </p>
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {accounts.map((account) => (
+          <div key={account.id} className="border p-4 rounded-lg">
+            <h2 className="font-bold">{account.name}</h2>
+            <p>{account.number}</p>
+            <p className="text-lg font-semibold">{account.balance} {account.currency}</p>
           </div>
-        </div>
-        <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-800">Quick Actions</h2>
-            <div className="mt-4 space-y-2">
-                <p>You have no recent activity.</p>
-            </div>
-        </div>
+        ))}
+      </div>
     </div>
   );
 }
